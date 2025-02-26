@@ -60,7 +60,7 @@ function Home() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-          <Button>Search</Button>
+          <Button text="Search"></Button>
         </form>
       </section>
       {error && <div>Failed to load, please try again later</div>}
