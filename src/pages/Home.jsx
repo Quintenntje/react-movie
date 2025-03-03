@@ -67,7 +67,7 @@ function Home() {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <section className="grid grid-cols-4 place-center gap-8">
+        <section className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4 sm:px-8 lg:px-16 place-items-center">
           {searchQuery && <div>search results for: {search}</div>}
           {movies.map((movie) => (
             <MovieCard movie={movie} key={movie.id} />
