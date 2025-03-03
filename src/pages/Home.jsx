@@ -2,6 +2,10 @@ import MovieCard from "../components/MovieCard.jsx";
 import { useEffect, useState } from "react";
 import { getPopularMovies, search } from "../services/api.js";
 import Button from "../components/Button.jsx";
+import ArrowBtn from "../components/ArrowBtn.jsx";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import "swiper/css";
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,6 +64,7 @@ function Home() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
+
           <Button text="Search"></Button>
         </form>
       </section>
@@ -67,12 +72,75 @@ function Home() {
       {loading ? (
         <div>Loading...</div>
       ) : (
-        <section className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 px-4 sm:px-8 lg:px-16 place-items-center">
-          {searchQuery && <div>search results for: {search}</div>}
+        <Swiper
+          spaceBetween={50}
+          slidesPerView={4}
+          breakpoints={{
+            "@0.00": {
+              slidesPerView: 1,
+              spaceBetween: 10,
+            },
+            "@0.75": {
+              slidesPerView: 2,
+              spaceBetween: 20,
+            },
+            "@1.00": {
+              slidesPerView: 3,
+              spaceBetween: 40,
+            },
+            "@1.50": {
+              slidesPerView: 4,
+              spaceBetween: 50,
+            },
+          }}
+        >
+          <div className="flex justify-between">
+            <ArrowBtn
+              place={"left"}
+              image={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-10"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
+                  />
+                </svg>
+              }
+            ></ArrowBtn>
+
+            <ArrowBtn
+              place={"right"}
+              image={
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="size-10"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+                  />
+                </svg>
+              }
+            ></ArrowBtn>
+          </div>
           {movies.map((movie) => (
-            <MovieCard movie={movie} key={movie.id} />
+            <SwiperSlide key={movie.id}>
+              <MovieCard movie={movie} key={movie.id} />
+            </SwiperSlide>
           ))}
-        </section>
+        </Swiper>
       )}
     </div>
   );
