@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom"; // Make sure Link is imported
+import { Link } from "react-router-dom"; 
 import { stringToSlug } from "../utils/slugify.js";
 
 function MovieCard({ movie }) {
@@ -8,7 +8,7 @@ function MovieCard({ movie }) {
 
   return (
     <article>
-      <Link to={`/movie/${stringToSlug(movie.title)}`}>
+      <Link to={`/movie/${stringToSlug(String(movie.title))}`}>
         <div className="relative group mb-2">
           <img
             className="h-full w-full group-hover:opacity-50 transition-opacity duration-300"

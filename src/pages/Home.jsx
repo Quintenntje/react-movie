@@ -1,50 +1,53 @@
-import MovieCard from "../components/MovieCard.jsx";
 import { useEffect, useState } from "react";
-import { getPopularMovies, search } from "../services/api.js";
+import { getPopularMovies, getPopularSeries, search } from "../services/api.js"; // Fixed typo in import
 import Button from "../components/Button.jsx";
-import ArrowBtn from "../components/ArrowBtn.jsx";
-import { Swiper, SwiperSlide } from "swiper/react";
 
-import "swiper/css";
+import HomeSection from "../partials/HomeSection.jsx";
 
 function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [movies, setMovies] = useState([]);
+  const [series, setSeries] = useState([]);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Default to false
 
   useEffect(() => {
-    const loadPopularMovies = async () => {
+    const loadContent = async () => {
+      setLoading(true);
       try {
-        const popularMovies = await getPopularMovies();
+        const [popularMovies, popularSeries] = await Promise.all([
+          getPopularMovies(),
+          getPopularSeries(),
+        ]);
         setMovies(popularMovies);
+        setSeries(popularSeries);
+        setError(null);
       } catch (err) {
-        console.log(err);
-        setError("Failed to load movies...");
+        console.error(err);
+        setError("Failed to load content. Please try again later.");
       } finally {
         setLoading(false);
       }
     };
-    loadPopularMovies();
+
+    loadContent();
   }, []);
 
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim()) return;
-    if (loading) return;
-    setLoading(true);
 
+    setLoading(true);
     try {
       const searchResults = await search(searchQuery);
       setMovies(searchResults);
       setError(null);
     } catch (err) {
-      console.log(err);
-      setError("Failed to search movies");
+      console.error(err);
+      setError("Failed to search movies. Please try again.");
     } finally {
       setLoading(false);
     }
-    setSearchQuery("");
   };
 
   return (
@@ -58,89 +61,25 @@ function Home() {
           onSubmit={handleSearch}
         >
           <input
-            className=" text-gray-400 w-full md:w-64 px-4 py-2 outline-none border-2 border-gray-300 focus:border-sky-500 rounded-lg transition-colors duration-200 placeholder-gray-400"
+            className="text-gray-400 w-full md:w-64 px-4 py-2 outline-none border-2 border-gray-300 focus:border-sky-500 rounded-lg transition-colors duration-200 placeholder-gray-400"
             type="text"
             placeholder="Search for movies..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
-
-          <Button text="Search"></Button>
+          <Button text="Search" type="submit"></Button>{" "}
+          {/* Added type="submit" */}
         </form>
       </section>
-      {error && <div>Failed to load, please try again later</div>}
+      {error && <div className="text-red-500 text-center">{error}</div>}{" "}
+      {/* Styled error */}
       {loading ? (
-        <div>Loading...</div>
+        <div className="text-center">Loading...</div>
       ) : (
-        <Swiper
-          spaceBetween={50}
-          slidesPerView={4}
-          breakpoints={{
-            "@0.00": {
-              slidesPerView: 1,
-              spaceBetween: 10,
-            },
-            "@0.75": {
-              slidesPerView: 2,
-              spaceBetween: 20,
-            },
-            "@1.00": {
-              slidesPerView: 3,
-              spaceBetween: 40,
-            },
-            "@1.50": {
-              slidesPerView: 4,
-              spaceBetween: 50,
-            },
-          }}
-        >
-          <div className="flex justify-between">
-            <ArrowBtn
-              place={"left"}
-              image={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-10"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18"
-                  />
-                </svg>
-              }
-            ></ArrowBtn>
-
-            <ArrowBtn
-              place={"right"}
-              image={
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="size-10"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
-                  />
-                </svg>
-              }
-            ></ArrowBtn>
-          </div>
-          {movies.map((movie) => (
-            <SwiperSlide key={movie.id}>
-              <MovieCard movie={movie} key={movie.id} />
-            </SwiperSlide>
-          ))}
-        </Swiper>
+        <>
+          <HomeSection data={movies} title="Popular Movies" link="/movies" />
+          <HomeSection data={series} title="Popular Series" link="/series" />
+        </>
       )}
     </div>
   );

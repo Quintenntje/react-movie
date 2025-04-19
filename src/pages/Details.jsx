@@ -1,7 +1,7 @@
 import { useParams } from "react-router-dom";
 import { slugToTitle } from "../utils/slugify.js";
 import { search, getActorsFromMovie } from "../services/api.js";
-import { useState, useEffect, act } from "react";
+import { useState, useEffect } from "react";
 import ActorCard from "../components/ActorCard.jsx";
 
 function Details() {

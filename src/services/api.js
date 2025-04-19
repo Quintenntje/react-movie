@@ -8,6 +8,13 @@ export async function getPopularMovies() {
   return data.results;
 }
 
+export async function getPopularSeries() {
+  const response = await fetch(`${BASE_URL}/tv/popular?api_key=${API_KEY}`);
+  const data = await response.json();
+
+  return data.results;
+}
+
 export async function search(query) {
   const response = await fetch(
     `${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(
